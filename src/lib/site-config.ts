@@ -302,7 +302,7 @@ export const siteConfig = {
       { name: "Leanne", role: "Organiser", phone: "TODO" },
       { name: "Luke", role: "Organiser", phone: "TODO" },
     ] satisfies Contact[],
-    groupChatUrl: "https://www.google.com", // TODO: WhatsApp group invite link
+    groupChatUrl: "https://wa.me/447402904746",
   },
 
   /* ---------------- RSVP ---------------- */

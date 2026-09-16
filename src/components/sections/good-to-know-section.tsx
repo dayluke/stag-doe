@@ -45,29 +45,23 @@ export function GoodToKnowSection() {
         <h3 className="font-display uppercase text-2xl text-brand-blue-ink">
           Any questions?
         </h3>
-        <ul className="flex flex-wrap items-start justify-center gap-x-10 gap-y-4">
-          {goodToKnow.contacts.map((contact, i) => (
-            <li key={`${contact.name}-${i}`} className="text-sm">
-              <span className="font-display uppercase text-lg text-foreground">
-                {contact.name}
-              </span>
-              <span className="eyebrow mt-1 block text-brand-rose-ink">
-                {contact.role}
-              </span>
-              {contact.phone ? (
-                <span className="mt-1.5 flex items-center justify-center gap-1.5 text-muted-foreground">
-                  <Phone className="h-3 w-3" strokeWidth={2} />
-                  {contact.phone}
-                </span>
-              ) : null}
-            </li>
-          ))}
-        </ul>
+        <span className="font-display uppercase text-lg text-foreground">
+          If it's important
+        </span>
+        <span className="eyebrow block text-brand-rose-ink">
+          Ask either Leanne or Luke directly
+        </span>
+        <span className="font-display uppercase mt-5 text-lg text-foreground">
+          If it's not urgent
+        </span>
+        <span className="eyebrow block mb-5 text-brand-rose-ink">
+          Leave a note in your RSVP
+        </span>
         {hasGroupChat ? (
           <Button asChild variant="outline">
             <a href={goodToKnow.groupChatUrl} target="_blank" rel="noreferrer">
               <MessageCircle className="h-4 w-4" />
-              Join the group chat
+              Drop us a message
             </a>
           </Button>
         ) : null}
