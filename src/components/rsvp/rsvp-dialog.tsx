@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, Check, Loader2, Search, Sparkles } from "lucide-react";
+import { ArrowLeft, Check, Loader2, Moon, Search, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { siteConfig } from "@/lib/site-config";
 import {
   findPartyByGuestName,
@@ -24,16 +24,59 @@ import {
   submitRsvps,
   type GuestRow,
   type PartyRow,
-  type MenuChoice,
 } from "@/lib/supabase";
 
 type Step = "search" | "party" | "done";
+
+/**
+ * The slider stops: the day each night starts on, plus the day everyone
+ * leaves. Picking a range of stops picks the nights in between — so
+ * Friday → Sunday means the Friday and Saturday nights.
+ */
+const stayStops = (() => {
+  const dayName = (id: string) =>
+    siteConfig.itinerary.find((d) => d.id === id)?.day;
+
+  const stops = siteConfig.nights.map((n) => ({
+    id: n.id as string,
+    label: dayName(n.id) ?? n.label,
+  }));
+
+  const lastNight = siteConfig.nights[siteConfig.nights.length - 1];
+  const lastNightDay = siteConfig.itinerary.findIndex(
+    (d) => d.id === lastNight.id
+  );
+  const leaveDay = siteConfig.itinerary[lastNightDay + 1];
+  stops.push({
+    id: leaveDay?.id ?? "leaving",
+    label: leaveDay?.day ?? "Leaving",
+  });
+
+  return stops;
+})();
+
+const LAST_STOP = stayStops.length - 1;
+
+/** Night ids covered by a [arrival, departure] pair of slider stops. */
+function nightsBetween(arrival: number, departure: number): string[] {
+  return siteConfig.nights.slice(arrival, departure).map((n) => n.id);
+}
+
+function staySummary(arrival: number, departure: number) {
+  const nights = departure - arrival;
+  return `${stayStops[arrival].label} to ${stayStops[departure].label} · ${nights} night${
+    nights === 1 ? "" : "s"
+  }`;
+}
 
 type DraftGuest = {
   id: string;
   full_name: string;
   attending: "yes" | "no";
-  menuChoice: MenuChoice;
+  /** Index into `stayStops` — the day they arrive. */
+  arrival: number;
+  /** Index into `stayStops` — the day they head home. */
+  departure: number;
   dietaryNotes: string;
 };
 
@@ -72,11 +115,19 @@ export function RsvpDialog({ open, onOpenChange, initialAttending }: Props) {
     (guests: GuestRow[]) => {
       const next: Record<string, DraftGuest> = {};
       for (const g of guests) {
+        // Turn the saved night ids back into a pair of slider stops. Anyone
+        // who hasn't answered yet defaults to the whole weekend.
+        const saved = (g.nights ?? [])
+          .map((id) => siteConfig.nights.findIndex((n) => n.id === id))
+          .filter((i) => i >= 0)
+          .sort((a, b) => a - b);
+
         next[g.id] = {
           id: g.id,
           full_name: g.full_name,
           attending: (g.attending as "yes" | "no" | null) ?? initialAttending ?? "yes",
-          menuChoice: g.menu_choice ?? null,
+          arrival: saved.length ? saved[0] : 0,
+          departure: saved.length ? saved[saved.length - 1] + 1 : LAST_STOP,
           dietaryNotes: g.dietary_notes ?? "",
         };
       }
@@ -97,7 +148,7 @@ export function RsvpDialog({ open, onOpenChange, initialAttending }: Props) {
           party_id: "demo-party",
           full_name: query.trim(),
           attending: null,
-          menu_choice: null,
+          nights: null,
           dietary_notes: null,
           responded_at: null,
         },
@@ -106,7 +157,7 @@ export function RsvpDialog({ open, onOpenChange, initialAttending }: Props) {
           party_id: "demo-party",
           full_name: "Guest of " + query.trim(),
           attending: null,
-          menu_choice: null,
+          nights: null,
           dietary_notes: null,
           responded_at: null,
         },
@@ -162,15 +213,6 @@ export function RsvpDialog({ open, onOpenChange, initialAttending }: Props) {
   async function handleSubmit() {
     if (!selectedParty) return;
 
-    // Validate: anyone attending must have a menu choice.
-    const missing = Object.values(draft).find(
-      (g) => g.attending === "yes" && !g.menuChoice
-    );
-    if (missing) {
-      toast.error(`Please pick a menu for ${missing.full_name}.`);
-      return;
-    }
-
     setSubmitting(true);
     try {
       if (isSupabaseConfigured) {
@@ -178,7 +220,8 @@ export function RsvpDialog({ open, onOpenChange, initialAttending }: Props) {
           Object.values(draft).map((g) => ({
             guestId: g.id,
             attending: g.attending,
-            menuChoice: g.attending === "yes" ? g.menuChoice : null,
+            nights:
+              g.attending === "yes" ? nightsBetween(g.arrival, g.departure) : [],
             dietaryNotes: g.dietaryNotes.trim() || null,
           }))
         );
@@ -264,9 +307,11 @@ export function RsvpDialog({ open, onOpenChange, initialAttending }: Props) {
                       key={p.id}
                       type="button"
                       onClick={() => choosePartyFromResults(p)}
-                      className="w-full rounded-2xl border border-border bg-secondary/40 p-4 text-left hover:bg-secondary/70 transition-colors"
+                      className="w-full rounded-2xl border-2 border-brand-rose/45 bg-secondary p-4 text-left transition-colors hover:border-brand-rose hover:bg-accent"
                     >
-                      <div className="font-display text-lg">{p.party_name}</div>
+                      <div className="font-display uppercase text-lg text-brand-blue-ink">
+                        {p.party_name}
+                      </div>
                       <div className="text-sm text-muted-foreground">
                         {p.guests.map((g) => g.full_name).join(", ")}
                       </div>
@@ -289,15 +334,15 @@ export function RsvpDialog({ open, onOpenChange, initialAttending }: Props) {
                 <button
                   type="button"
                   onClick={() => setStep("search")}
-                  className="mb-2 inline-flex items-center gap-1 text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground"
+                  className="eyebrow mb-3 inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-brand-blue"
                 >
                   <ArrowLeft className="h-3 w-3" />
                   Back
                 </button>
                 <DialogTitle>{selectedParty.party_name}</DialogTitle>
                 <DialogDescription>
-                  Tell us who&apos;s coming, and please pick a menu for each
-                  attending guest.
+                  Tell us who&apos;s coming, and which days each of you can
+                  make.
                 </DialogDescription>
               </DialogHeader>
 
@@ -316,7 +361,7 @@ export function RsvpDialog({ open, onOpenChange, initialAttending }: Props) {
                   </Label>
                   <Textarea
                     id={`notes-${selectedParty.id}`}
-                    placeholder="Allergies, questions, song requests..."
+                    placeholder="Allergies, lifts, turning up late..."
                     value={
                       Object.values(draft)[0]?.dietaryNotes ?? ""
                     }
@@ -359,8 +404,8 @@ export function RsvpDialog({ open, onOpenChange, initialAttending }: Props) {
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="flex flex-col items-center py-6 text-center"
             >
-              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-primary">
-                <Check className="h-6 w-6" strokeWidth={2} />
+              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full border-[3px] border-brand-olive text-brand-olive-ink">
+                <Check className="h-7 w-7" strokeWidth={2.5} />
               </div>
               <DialogTitle>Thank you</DialogTitle>
               <DialogDescription className="mt-2 max-w-sm">
@@ -386,32 +431,30 @@ function GuestCard({
   onChange: (patch: Partial<DraftGuest>) => void;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-secondary/40 p-4">
+    <div className="rounded-2xl border-2 border-brand-blue/35 bg-secondary p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <span className="font-display text-lg leading-none">
+        <span className="font-display uppercase text-lg leading-none text-brand-blue-ink">
           {guest.full_name}
         </span>
-        <div className="flex rounded-full border border-border bg-card p-0.5 text-xs">
+        <div className="flex rounded-full border-2 border-brand-rose/45 bg-card p-0.5 text-xs font-bold">
           <button
             type="button"
             onClick={() => onChange({ attending: "yes" })}
-            className={`px-3 py-1.5 rounded-full transition-colors ${
+            className={`rounded-full px-3 py-1.5 transition-colors ${
               guest.attending === "yes"
                 ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground hover:text-brand-blue"
             }`}
           >
             Attending
           </button>
           <button
             type="button"
-            onClick={() =>
-              onChange({ attending: "no", menuChoice: null })
-            }
-            className={`px-3 py-1.5 rounded-full transition-colors ${
+            onClick={() => onChange({ attending: "no" })}
+            className={`rounded-full px-3 py-1.5 transition-colors ${
               guest.attending === "no"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-brand-rose text-brand-ivory"
+                : "text-muted-foreground hover:text-brand-rose"
             }`}
           >
             Can&apos;t make it
@@ -422,7 +465,7 @@ function GuestCard({
       <AnimatePresence initial={false}>
         {guest.attending === "yes" ? (
           <motion.div
-            key="menu"
+            key="stay"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
@@ -430,44 +473,45 @@ function GuestCard({
             className="overflow-hidden"
           >
             <div className="mt-4">
-              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                Menu choice
-              </Label>
-              <RadioGroup
-                className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2"
-                value={guest.menuChoice ?? ""}
-                onValueChange={(v) =>
-                  onChange({ menuChoice: v as MenuChoice })
-                }
-              >
-                {siteConfig.menus.map((m) => {
-                  const active = guest.menuChoice === m.id;
-                  return (
-                    <label
-                      key={m.id}
-                      htmlFor={`${guest.id}-${m.id}`}
-                      className={`flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors ${
-                        active
-                          ? "border-primary bg-primary/10"
-                          : "border-border bg-card hover:bg-secondary/60"
-                      }`}
-                    >
-                      <RadioGroupItem
-                        id={`${guest.id}-${m.id}`}
-                        value={m.id}
-                      />
-                      <div>
-                        <div className="text-sm font-medium">{m.title}</div>
-                        {m.subtitle ? (
-                          <div className="text-xs text-muted-foreground">
-                            {m.subtitle}
-                          </div>
-                        ) : null}
-                      </div>
-                    </label>
-                  );
-                })}
-              </RadioGroup>
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <Label>Which days?</Label>
+                <span className="inline-flex items-center gap-1.5 text-xs text-foreground/80">
+                  <Moon className="h-3.5 w-3.5 text-brand-rose-ink" strokeWidth={2} />
+                  {staySummary(guest.arrival, guest.departure)}
+                </span>
+              </div>
+
+              <div className="mt-4 px-1">
+                <Slider
+                  min={0}
+                  max={LAST_STOP}
+                  step={1}
+                  minStepsBetweenThumbs={1}
+                  value={[guest.arrival, guest.departure]}
+                  onValueChange={([arrival, departure]) =>
+                    onChange({ arrival, departure })
+                  }
+                  thumbLabels={[
+                    `${guest.full_name} — day of arrival`,
+                    `${guest.full_name} — day of departure`,
+                  ]}
+                />
+                <div className="mt-3 flex justify-between">
+                  {stayStops.map((stop, i) => {
+                    const inStay = i >= guest.arrival && i <= guest.departure;
+                    return (
+                      <span
+                        key={stop.id}
+                        className={`text-xs font-bold uppercase tracking-wider transition-colors ${
+                          inStay ? "text-brand-blue" : "text-muted-foreground/50"
+                        }`}
+                      >
+                        {stop.label.slice(0, 3)}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </motion.div>
         ) : null}

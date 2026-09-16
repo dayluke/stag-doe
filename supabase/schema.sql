@@ -1,5 +1,5 @@
 -- =============================================================
--- Wedding RSVP schema
+-- Weekend RSVP schema
 --
 -- Run this once against your Supabase project (SQL Editor ->
 -- "New query" -> paste & run) to create the tables, indexes and
@@ -13,7 +13,7 @@
 -- * Guests store each individual's response.
 -- * Authenticated users are allowed to:
 --     - SEARCH guests by name (SELECT with ilike)
---     - UPDATE their own `attending`, `menu_choice`, `dietary_notes`
+--     - UPDATE their own `attending`, `nights`, `dietary_notes`
 --       and `responded_at` columns (so responses can be edited).
 --   It is NOT allowed to insert or delete rows. You (as the couple)
 --   pre-load the guest list via the Supabase dashboard or a seed
@@ -36,11 +36,18 @@ create table if not exists public.guests (
   party_id uuid not null references public.parties(id) on delete cascade,
   full_name text not null,
   attending text check (attending in ('yes', 'no')),
-  menu_choice text check (menu_choice in ('traditional', 'vegetarian')),
+  -- Which nights they're staying over for. Values are the night ids from
+  -- `siteConfig.nights` in src/lib/site-config.ts (e.g. {friday,saturday}).
+  nights text[] not null default '{}',
   dietary_notes text,
   responded_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+-- Existing projects created before the menu question was replaced by the
+-- nights question: bring them up to date. Safe to re-run.
+alter table public.guests add column if not exists nights text[] not null default '{}';
+alter table public.guests drop column if exists menu_choice;
 
 create index if not exists guests_party_id_idx on public.guests (party_id);
 create index if not exists guests_full_name_trgm_idx

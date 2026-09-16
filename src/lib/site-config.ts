@@ -1,197 +1,317 @@
-/**
- * Edit this file to customise the invitation content.
- * It is the single source of truth for all copy, dates,
- * menu items, accommodation options, and gift registry links.
- */
+export type ItineraryIcon =
+  | "arrival"
+  | "movie"
+  | "bike"
+  | "pub"
+  | "cocktails"
+  | "pizza"
+  | "waterpark"
+  | "bbq"
+  | "murder-mystery"
+  | "tidy-up"
+  | "departure";
 
-export type MenuCourse = {
-  name: string;
-  description: string;
-};
-
-export type MenuOption = {
-  id: "traditional" | "vegetarian" | (string & {});
-  title: string;
-  subtitle?: string;
-  imageUrl?: string;
-  courses: MenuCourse[];
-};
-
-export type Accommodation = {
-  name: string;
-  distance: string;
-  priceRange?: string;
-  description: string;
-  url?: string;
-  imageUrl?: string;
-};
-
-export type TimelineEntry = {
+export type ItineraryEvent = {
   time: string;
   title: string;
-  description?: string;
+  icon: ItineraryIcon;
 };
 
-export type GiftOption = {
+export type ItineraryDay = {
+  id: string;
+  day: string;
+  subtitle?: string;
+  events: ItineraryEvent[];
+};
+
+export type Room = {
+  name: string;
+  sleeps: string;
+  note?: string;
+};
+
+export type TravelIcon = "car" | "train" | "lift";
+
+export type TravelOption = {
+  icon: TravelIcon;
   title: string;
   description: string;
-  url: string;
+};
+
+export type PackingIcon =
+  | "swim"
+  | "bike"
+  | "shoes"
+  | "costume"
+  | "drink"
+  | "towel"
+  | "wallet"
+  | "misc";
+
+export type PackingItem = {
+  icon: PackingIcon;
+  title: string;
+  description: string;
+};
+
+export type CostItem = {
+  title: string;
+  amount: string;
+  description: string;
+};
+
+export type HouseRule = {
+  title: string;
+  description: string;
+};
+
+export type Contact = {
+  name: string;
+  role: string;
+  phone?: string;
+};
+
+export type NightId = "friday" | "saturday" | "sunday";
+
+export type Night = {
+  id: NightId;
   label: string;
 };
 
+const arriveTime = "7:00 PM";
+const leaveTime = "10:00 AM";
+const arriveHuman = `${arriveTime} on Friday`;
+const leaveHuman = `${leaveTime} on Monday`;
+
 export const siteConfig = {
-  /* ---------------- Couple + headline ---------------- */
+  /* ---------------- Who + headline ---------------- */
   brideFirstName: "Leanne",
   groomFirstName: "Luke",
   ampersand: "&",
-  heroImageUrl: "252A7560.JPG", // "/hero-placeholder.svg",
+  heroImageUrl: "HYM46132-1-3971303082.jpg", // "/hero-placeholder.svg",
   heroImageAlt: "Leanne and Luke",
 
   /* ---------------- Core info ---------------- */
-  dateIso: "2027-09-15",
-  dateHuman: "Saturday, 15th September 2027",
-  timeArrival: "1:00 PM",
-  timeCeremony: "1:30 PM",
-  locationShort: "Clock Barn, Tufton Warren",
-  venueShortName: "Clock Barn",
-  venueAddress: "Tufton Warren, Whitchurch, Hampshire, RG28 7RB",
-  venueMapUrl:
-    "https://www.google.com/maps/search/?api=1&query=Clock+Barn+Tufton+Warren",
+  dateIso: "2027-08-27",
+  dateHuman: "Friday 27th – Monday 30th August 2027",
+  arriveHuman,
+  leaveHuman,
+  locationShort: "Lymington, The New Forest",
 
-  /* ---------------- Menus ---------------- */
-  menus: [
+  /* ---------------- Itinerary ---------------- */
+  itinerary: [
     {
-      id: "traditional",
-      title: "Traditional Menu",
-      subtitle: "A British-garden inspired tasting",
-      courses: [
-        {
-          name: "Starter",
-          description:
-            "Pressed pork belly and roasted chicken thighs",
-        },
-        {
-          name: "Main",
-          description:
-            "Butterflied legs of lamb with rosemary and garlic served with roast potatoes & roasted parsnips, carrots and butternut squash",
-        },
-        {
-          name: "Palate cleanser",
-          description:
-            "Strawberry and champagne sorbet",
-        },
-        {
-          name: "Dessert",
-          description:
-            "Trio of desserts: Salted caramel brownie with ice cream, Strawberry and lemon tart, Vanilla and mango cheesecake",
-        },
+      id: "friday",
+      day: "Friday",
+      subtitle: "Day one",
+      events: [
+        { time: `${arriveTime}`, title: "Arrive", icon: "arrival" },
+        { time: "8:00 PM", title: "Movie night", icon: "movie" },
       ],
     },
     {
-      id: "vegetarian",
-      title: "Vegetarian Menu",
-      subtitle: "Garden-forward and just as indulgent",
-      courses: [
-        {
-          name: "Starter",
-          description: "Ravioli of goat's cheese with cherry vine tomatoes",
-        },
-        {
-          name: "Main",
-          description:
-            "Honey Nut Roast with grilled creamed corn and roast potatoes",
-        },
-        {
-          name: "Palate cleanser",
-          description:
-            "Strawberry and champagne sorbet",
-        },
-        {
-          name: "Dessert",
-          description:
-            "Trio of desserts: Salted caramel brownie with ice cream, Strawberry and lemon tart, Vanilla and mango cheesecake",
-        },
+      id: "saturday",
+      day: "Saturday",
+      subtitle: "Day two",
+      events: [
+        { time: "11:00 AM", title: "Bike ride", icon: "bike" },
+        { time: "1:00 PM", title: "Pub lunch", icon: "pub" },
+        { time: "3:00 PM", title: "Cocktail masterclass", icon: "cocktails" },
+        { time: "7:00 PM", title: "Pizza oven", icon: "pizza" },
       ],
     },
-  ] satisfies MenuOption[],
+    {
+      id: "sunday",
+      day: "Sunday",
+      subtitle: "Day three",
+      events: [
+        { time: "11:00 AM", title: "New Forest Water Park", icon: "waterpark" },
+        { time: "6:00 PM", title: "BBQ", icon: "bbq" },
+        { time: "8:00 PM", title: "Murder mystery night", icon: "murder-mystery" },
+      ],
+    },
+    {
+      id: "monday",
+      day: "Monday",
+      subtitle: "Day four",
+      events: [
+        { time: "8:00 AM", title: "Tidy up", icon: "tidy-up" },
+        { time: `${leaveTime}`, title: "Leave", icon: "departure" },
+      ],
+    },
+  ] satisfies ItineraryDay[],
 
-  /* ---------------- Accommodation ---------------- */
-  accommodation: [
-    {
-      name: "Farmhouse – Clock Barn",
-      distance: "0 miles — at the venue",
-      priceRange: "£",
-      description:
-        "The Farmhouse is a small house with 9 rooms onsite at Clock Barn. This has been booked for immediate family and the wedding party only. For other guests, we have detailed alternative accommodation options that are available both onsite and in nearby villages.",
-      url: "#",
-    },
-    {
-      name: "Rose Barn – Clock Barn",
-      distance: "0 miles — at the venue",
-      priceRange: "££",
-      description:
-        "Rose Barn rooms are located on the grounds of our beautiful venue. If you would prefer easy access to your room after carriages, then Rose Barn could be for you!",
-      url: "#",
-    },
-    {
-      name: "White Hart Hotel – Whitchurch",
-      distance: "2.6 miles",
-      priceRange: "££",
-      description:
-        "The White Hart hotel is located approximately 5 minutes away from the venue via car. It is located within Whitchurch, the closest village to our venue.",
-      url: "https://whiteharthotelwhitchurch.co.uk/",
-    },
-    {
-      name: "White Hart – Overton",
-      distance: "6.3 miles",
-      priceRange: "£££",
-      description:
-        "The White Hart Overton is located within our own village, just 15 minutes via car from the venue. ",
-      url: "https://uphaminns.co.uk/inns/the-white-hart-overton/",
-    },
-  ] satisfies Accommodation[],
-
-  /* ---------------- Dress code ---------------- */
-  dressCode: {
-    title: "Summer Pastels",
+  /* ---------------- The house ---------------- */
+  house: {
+    name: "Durns",
+    tagline: "A gorgeous, large house to ourselves in the New Forest",
     description:
-      "We can't wait to celebrate with you! When it comes to what to wear, we want everyone to feel wonderful and at ease, so choose an outfit that makes you feel your best while embracing the joyful and elegant spirit of our day. We're envisioning a beautiful palette of summer pastel tones — think lilacs, baby pinks, blues and butter yellows. Please kindly avoid wearing white or ivory to allow the bride to shine.",
+    "It sleeps 12 people, and has 6 bedrooms. The Ground Floor has a sitting room, dining room, reception hall, and kitchen. The First Floor has 3 double bedrooms. The Second Floor has the loft bedroom, snug, and large bathroom.",
+    listingUrl: "", // TODO: optional Airbnb / booking link
+    rooms: [
+      { name: "Room 1", sleeps: "First Floor", note: "Luke & Leanne" },
+      { name: "Room 2", sleeps: "First Floor", note: "Nikki & David" },
+      { name: "Room 3", sleeps: "First Floor", note: "Ben & Emma" },
+      { name: "Loft Bedroom", sleeps: "Second Floor", note: "Sleeps up to 8" },
+      { name: "The Cabin", sleeps: "Shepard's Hut", note: "Alex & Kian" },
+      // George, Rich, Sian, Ollie? ( + Lucy?)
+    ] satisfies Room[],
+    provided: [
+      "Towels, shampoo, conditioner and bodywash",
+      "Well-stocked pantry (tea, coffee, etc.)",
+      "Wellies and picnic blankets",
+      "10 adult bikes & helmets",
+      "Pool table, dart board, table tennis and garden games",
+      "Pizza oven and BBQ",
+    ],
   },
 
-  /* ---------------- Timeline ---------------- */
-  timeline: [
-    { time: "1:00 PM", title: "Arrival", description: "Welcome drinks in the walled garden" },
-    { time: "1:30 PM", title: "Ceremony", description: "Vows in the Orangery" },
-    { time: "2:00 PM", title: "Drinks reception", description: "Canapés on the lawn" },
-    { time: "3:30 PM", title: "Wedding breakfast", description: "Wedding breakfast in the Great Hall" },
-    { time: "5:30 PM", title: "Speeches", description: "" },
-    { time: "6:30 PM", title: "First dance", description: "Then the party starts" },
-    { time: "8:00 PM", title: "Cake cutting and evening food", description: "" },
-    { time: "11:00 PM", title: "Carriages", description: "Carriages at midnight" },
-  ] satisfies TimelineEntry[],
-
-  /* ---------------- Gifts / Registry ---------------- */
-  gifts: {
-    intro:
-      "Your presence on the day is the best gift we could ask for. If you would like to contribute to our honeymoon or new home, we would be incredibly grateful.",
+  /* ---------------- Getting there ---------------- */
+  travel: {
+    address: "Durns, Rope Hill, Boldre, Hampshire, SO41 8NE",
+    mapUrl: "https://www.google.com/maps/search/?api=1&query=durns+lymore+new+forest",
+    intro: `Arrive from ${arriveHuman} — earlier if you fancy helping set up.`,
     options: [
       {
-        title: "Honeymoon fund",
-        description: "Help us disappear somewhere warm for a week or two.",
-        url: "https://www.theknot.com/",
-        label: "Contribute on The Knot",
+        icon: "car",
+        title: "By car",
+        description:
+          "There's parking for 6 cars at the house. Roughly 30 mins from Southampton, 2.5 hrs from Gloucester, and 3.5 hrs from Cambridge.",
       },
       {
-        title: "Home together",
-        description: "A curated list of little things for our new home.",
-        url: "https://www.theknot.com/",
-        label: "View registry",
+        icon: "train",
+        title: "By train",
+        description:
+          "Nearest station is Brockenhurst, about 10 minutes away by bus. Alternatively, tell us your arrival time and we can try to collect you.",
       },
-    ] satisfies GiftOption[],
+      {
+        icon: "lift",
+        title: "Lifts",
+        description:
+          "If you're unable to drive or catch public transport, then please let us know in your RSVP and we’ll try and arrange someone to collect you.",
+      },
+    ] satisfies TravelOption[],
+  },
+
+  /* ---------------- Food and drink ---------------- */
+  foodAndDrink: {
+    intro:
+      "We've got breakfast and dinners sorted, but lunches and drinks are on you.",
+    covered: [
+      "Friday — arriving after dinner, but we'll have snacks for the movie night",
+      "Saturday — breakfast, and pizza from the oven in the evening",
+      "Sunday — breakfast and the BBQ", // TODO: Lunch for Sunday
+      "Monday — breakfast before we head off",
+      "Tea, coffee, snacks and soft drinks throughout",
+    ],
+    byo: [
+      "Your own booze for the weekend",
+      "Saturday’s pub lunch — pay for your own on the day",
+      "Sunday's lunch at the water park",
+      "Anything you specifically can’t live without",
+    ],
+    note:
+      "Allergies or anything you don’t eat? Tell us in your RSVP and we’ll sort it.",
+  },
+
+  /* ---------------- What to bring ---------------- */
+  packing: {
+    intro: "The house comes with a lot of the necessaries, but don't forget to bring these!",
+    items: [
+      {
+        icon: "swim",
+        title: "Might be cold without them",
+        description:
+          "Swimwear and towels for the water park and swimming pool.",
+      },
+      {
+        icon: "shoes",
+        title: "There's a snake in my boot",
+        description: "Pack shoes that you can ride and walk in — the New Forest can get muddy.",
+      },
+      {
+        icon: "costume",
+        title: "It's not a dress, it's a kilt",
+        description:
+          "TODO — characters go out roughly a week before, so you’ll know who you’re dressing as.",
+      },
+      {
+        icon: "drink",
+        title: "Martini shaken, not stirred",
+        description: "Bring your own drinks, whether that be alcoholic or not. Nearest supermarket is 10-mins away.",
+      },
+    ] satisfies PackingItem[],
+  },
+
+  /* ---------------- The costs ---------------- */
+  costs: {
+    intro:
+      "Everything below is split evenly. Here’s exactly what you’re paying for.",
+    perPerson: "£180",
+    items: [
+      {
+        title: "The house",
+        amount: "£70", // TODO: is £70 each enough???
+        description: "Three nights, split between everyone staying.",
+      },
+      {
+        title: "Food kitty",
+        amount: "£25", // TODO: £4pp breakfast each day (£12 total), £7pp BBQ, £6pp pizza night
+        description: "Breakfasts, the pizza night, the BBQ and everything in between.",
+      },
+      {
+        title: "Activities",
+        amount: "£85", // TODO: £60pp for cocktail masterclass, £22pp for water park
+        description: "2-hour cocktail masterclass, and a 1-hour water park session (doesn't include wetsuit).",
+      },
+    ] satisfies CostItem[],
+    notIncluded: [
+      "Saturday’s pub lunch",
+      "Sunday's water park lunch",
+      "Your own drinks",
+      "Getting there",
+    ],
+    payment: {
+      label: "Pay your share",
+      url: "https://settleup.starlingbank.com/luke-day-leanne-newman-4bcac9",
+      method: "Pay using the link below or our bank account details:",
+      reference: "Account Number: 88213601, Sort Code: 60-83-71",
+      deadlineHuman: "at least 1 month before",
+      note: "",
+    },
+  },
+
+  /* ---------------- Good to know ---------------- */
+  goodToKnow: {
+    rules: [
+      {
+        title: "Quiet after 11pm",
+        description: "We need to try and keep noise to a minimum before 7:30AM and after 10:00PM.",
+      },
+      {
+        title: "No smoking",
+        description: "Smoking is strictly prohibited within the property. But it says nothing about edibles...",
+      },
+      {
+        title: "Leave it as we found it",
+        description:
+          "Items to be put back in place, rubbish in bins, washing up done & put away, and beds to be stripped.",
+      }, // 
+    ] satisfies HouseRule[],
+    contacts: [
+      { name: "Leanne", role: "Organiser", phone: "TODO" },
+      { name: "Luke", role: "Organiser", phone: "TODO" },
+    ] satisfies Contact[],
+    groupChatUrl: "https://www.google.com", // TODO: WhatsApp group invite link
   },
 
   /* ---------------- RSVP ---------------- */
-  rsvpDeadlineHuman: "1st August 2027",
+  rsvpDeadlineHuman: "March 2027",
+  nights: [
+    { id: "friday", label: "Friday" },
+    { id: "saturday", label: "Saturday" },
+    { id: "sunday", label: "Sunday" },
+  ] satisfies Night[],
 } as const;
 
 export type SiteConfig = typeof siteConfig;

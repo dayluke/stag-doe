@@ -1,32 +1,56 @@
-# Wedding Invitation
+# Stag & Doe
 
-A soft, sage-green, mobile-friendly wedding invitation and RSVP site built
-with **Next.js 16**, **Tailwind CSS v4**, **shadcn/ui primitives**,
-**Framer Motion** and **Supabase**. Deploys as a static site to **GitHub
-Pages** via GitHub Actions.
+A mobile-friendly stag-and-doe weekend site and RSVP form built with
+**Next.js 16**, **Tailwind CSS v4**, **shadcn/ui primitives**, **Framer
+Motion** and **Supabase**. Deploys as a static site to **GitHub Pages** via
+GitHub Actions.
+
+## The look
+
+The whole site is a web translation of the printed invite,
+[`public/Stag-and-Doe-invite.png`](./public/Stag-and-Doe-invite.png):
+
+- **Palette** — the invite's cream ground (`#f8f6ea`) and its five inks:
+  blue, rose, red, olive and gold. Sampled straight from the artwork and
+  declared as `--brand-*` in `src/app/globals.css`. Each ink also has a
+  darker `--brand-*-ink` cousin, because the drawing colours don't clear
+  AA contrast at body-copy sizes.
+- **Type** — Block Berthold, the invite's own poster face, self-hosted
+  from `public/fonts` (font by [OnlineWebFonts](https://www.onlinewebfonts.com/fonts),
+  CC BY 4.0 — keep the credit if you keep the font). Nunito for body copy.
+- **The wavy frame** — `src/components/ui/wavy-frame.tsx`. It measures its
+  container and regenerates the path rather than stretching one SVG, so
+  the wave period and line weight stay constant on any aspect ratio.
+  `WavyRule` is the same line as a single horizontal rule.
+- **The drawings** — the hand-drawn SVGs in `/public`, wrapped by
+  `src/components/ui/doodle.tsx`. Where a section has no matching drawing
+  it falls back to a lucide glyph in an ink stamp (`InkBadge`).
 
 ## What's here
 
 Sections, in order of appearance:
 
-1. **Hero** — a large photo, your names, and the date.
-2. **The essentials** — date, arrival time, location.
-3. **Menus** — Traditional and Vegetarian on a swipeable carousel.
-4. **Accommodation** — a carousel of places to stay.
-5. **Venue** — address, arrival time, link to maps.
-6. **Dress code** — a single clear card.
-7. **Timeline** — scroll-animated running order of the day.
-8. **RSVP** — a dedicated section, plus a sticky bottom bar that appears
+1. **Hero** — the invite itself: names, the doodle grid, "Stag & Doe".
+2. **The essentials** — the photo in a wavy frame, dates, place, cost.
+3. **Itinerary** — one swipeable card per day.
+4. **The house** — description, rooms carousel, what's provided.
+5. **Getting there** — address, map link, car / train / lifts.
+6. **Food & drink** — what's covered vs. bring your own.
+7. **What to bring** — the packing list.
+8. **What it costs** — the per-person total, the breakdown, how to pay.
+9. **RSVP** — a dedicated section, plus a sticky bottom bar that appears
    once the user scrolls past the hero.
-9. **Gifts / registry** — configurable with TheKnot or any other URL.
-10. **Footer** — names, date, a closing line.
+10. **Good to know** — house rules and who to contact.
+11. **Footer** — names, date, a closing line.
 
 The **RSVP dialog** lets a guest:
 
 - Search by name (case-insensitive substring match on the guest list).
 - Pick the right party if multiple matches come back.
 - Mark each person in their party as attending or not.
-- Choose a menu per attending person.
+- Set which days each attending person is around for, with a two-handle
+  slider (arrival day → departure day; the nights in between are what
+  gets saved).
 - Leave dietary / other notes.
 - Come back later and edit their response (just searching again loads
   their existing answers).
@@ -52,13 +76,13 @@ Almost everything you'll want to change lives in one file:
 src/lib/site-config.ts
 ```
 
-Names, the date, menus, accommodation options, the timeline and the
-registry links are all edited there. The palette and typography live in
-`src/app/globals.css` — override the CSS variables at the top (e.g.
-`--primary`, `--background`) to reskin the whole site.
+Names, the dates, the itinerary, the house, travel, food, the packing
+list, the costs and the RSVP deadline are all edited there. The palette
+and typography live in `src/app/globals.css` — override the `--brand-*`
+variables at the top to reskin the whole site.
 
-Put your hero photo in `/public` and update `heroImageUrl` in
-`site-config.ts` (e.g. `/our-photo.jpg`).
+Put your photo in `/public` and update `heroImageUrl` in `site-config.ts`
+(e.g. `/our-photo.jpg`) — it's used in **The essentials** section.
 
 ## Setting up Supabase
 
@@ -126,7 +150,7 @@ custom domain at the root, unset `basePath` by setting
 - **Next.js 16** App Router, static export (`output: 'export'`)
 - **Tailwind CSS v4** with CSS variables for theming
 - **Radix UI** primitives (Dialog, RadioGroup, Label)
-- **Embla Carousel** for the menu and accommodation sliders
+- **Embla Carousel** for the itinerary and rooms sliders
 - **Framer Motion** for scroll-triggered fades and the sticky CTA
 - **Sonner** for toasts
 - **Supabase** as the RSVP backend
@@ -140,11 +164,11 @@ src/
     page.tsx            Composes the sections in order
     globals.css         Palette + tokens (edit me to reskin)
   components/
-    ui/                 Button, Dialog, Input, Carousel, etc.
+    ui/                 Button, Dialog, Input, Carousel, WavyFrame, Doodle
     sections/           One file per page section
     rsvp/               Sticky CTA + dialog flow
   lib/
-    site-config.ts      All your wedding content (edit me!)
+    site-config.ts      All your weekend content (edit me!)
     supabase.ts         Client + search / submit helpers
     utils.ts            cn() helper
 supabase/

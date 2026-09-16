@@ -2,6 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { getSupabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Doodle, Sparkle } from "@/components/ui/doodle";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { WavyFrame } from "@/components/ui/wavy-frame";
+import { siteConfig } from "@/lib/site-config";
 
 export function PasswordModal({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -85,7 +91,7 @@ export function PasswordModal({ children }: { children: React.ReactNode }) {
       <>
         {children}
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <div className="h-9 w-9 animate-spin rounded-full border-4 border-brand-rose border-t-transparent" />
         </div>
       </>
     );
@@ -95,31 +101,49 @@ export function PasswordModal({ children }: { children: React.ReactNode }) {
     <>
       {children}
       {!isAuthenticated && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
-          <div className="w-full max-w-md p-8 bg-card rounded-lg shadow-lg border border-border">
-            <h2 className="text-2xl font-display font-semibold mb-6 text-center">
-              Please enter the password
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <input
+        <div className="paper fixed inset-0 z-50 flex items-center justify-center bg-background px-5">
+          <div className="relative z-10 w-full max-w-md px-6 py-12 sm:px-10">
+            <WavyFrame
+              color="var(--brand-rose)"
+              amplitude={8}
+              period={84}
+              radius={48}
+              strokeWidth={5}
+            />
+            <Sparkle size={30} className="right-[8%] top-[6%]" />
+            <Sparkle size={34} twin className="left-[7%] top-[9%]" />
+
+            <div className="relative flex flex-col items-center text-center">
+              <Doodle name="cocktail" size={78} />
+              <h2 className="mt-4 font-display uppercase text-3xl leading-none text-brand-blue">
+                {siteConfig.groomFirstName} {siteConfig.ampersand}{" "}
+                {siteConfig.brideFirstName}
+              </h2>
+              <p className="eyebrow mt-3 text-brand-rose-ink">
+                Invitation only
+              </p>
+
+              <form onSubmit={handleSubmit} className="mt-7 w-full space-y-3">
+                <Label htmlFor="site-password" className="sr-only">
+                  Password
+                </Label>
+                <Input
+                  id="site-password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
-                  className="w-full px-4 py-2 border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="text-center"
                   required
                 />
-              </div>
-              {error && <p className="text-red-500 text-sm">{error}</p>}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full px-4 py-2 bg-foreground text-background rounded-md font-medium hover:bg-foreground/90 disabled:opacity-50"
-              >
-                {loading ? "Verifying..." : "Enter"}
-              </button>
-            </form>
+                {error ? (
+                  <p className="text-sm font-semibold text-brand-red-ink">{error}</p>
+                ) : null}
+                <Button type="submit" size="lg" className="w-full" disabled={loading}>
+                  {loading ? "Verifying..." : "Come on in"}
+                </Button>
+              </form>
+            </div>
           </div>
         </div>
       )}

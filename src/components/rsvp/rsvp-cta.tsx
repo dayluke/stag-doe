@@ -2,8 +2,10 @@
 
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Heart, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Doodle, Sparkle } from "@/components/ui/doodle";
+import { WavyFrame } from "@/components/ui/wavy-frame";
 import { RsvpDialog } from "@/components/rsvp/rsvp-dialog";
 import { siteConfig } from "@/lib/site-config";
 
@@ -48,42 +50,61 @@ export function RsvpCta() {
 
   return (
     <>
-      {/* Primary inline RSVP block (always visible in-page) */}
+      {/* Primary inline RSVP block — the invite's frame, one more time. */}
       <section
         id="rsvp"
-        className="relative w-full px-5 py-24 bg-accent/40 scroll-mt-20"
+        className="paper relative w-full scroll-mt-20 px-4 py-16 sm:px-8 sm:py-20"
       >
-        <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
-          <span className="text-xs uppercase tracking-[0.32em] text-muted-foreground mb-4">
-            Please reply by {siteConfig.rsvpDeadlineHuman}
-          </span>
-          <h2 className="font-display text-4xl sm:text-5xl leading-[1.05]">
-            Will you join us?
-          </h2>
-          <p className="mt-5 max-w-md text-muted-foreground">
-            We&apos;d love to know if you can make it. Tap below to let us know
-            — it only takes a minute.
-          </p>
-          <div
-            ref={ctaButtonsRef}
-            className="mt-10 flex flex-col gap-3 w-full sm:flex-row sm:justify-center"
-          >
-            <Button
-              size="lg"
-              className="min-w-56"
-              onClick={() => openWith("yes")}
+        <div className="relative mx-auto w-full max-w-3xl px-5 py-14 sm:px-10 sm:py-16">
+          <WavyFrame
+            color="var(--brand-rose)"
+            amplitude={8}
+            period={92}
+            radius={52}
+            strokeWidth={5}
+            fill="var(--card)"
+          />
+          <Sparkle size={30} className="right-[6%] top-[8%]" />
+          <Sparkle size={38} twin className="bottom-[10%] left-[5%]" />
+
+          <div className="relative z-10 flex flex-col items-center text-center">
+            <div className="mb-5 flex items-end gap-4">
+              <Doodle
+                name="cocktail"
+                size={62} className="tilt-l"
+              />
+              <Doodle
+                name="wineTable"
+                size={70} className="tilt-r"
+              />
+            </div>
+            <span className="eyebrow mb-3 text-brand-rose-ink">
+              Please reply by {siteConfig.rsvpDeadlineHuman}
+            </span>
+            <h2 className="font-display uppercase text-brand-blue text-[clamp(2.25rem,9vw,4rem)]">
+              Will you join us?
+            </h2>
+            <p className="mt-4 max-w-md text-balance text-muted-foreground">
+              Please let us know as soon as possible whether you can make it,
+              so we can finalise the numbers for the venue and activities.
+            </p>
+            <div
+              ref={ctaButtonsRef}
+              className="mt-9 flex w-full flex-col gap-3 sm:flex-row sm:justify-center"
             >
-              <Heart className="h-4 w-4" strokeWidth={2} />
-              Joyfully accept
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="min-w-56"
-              onClick={() => openWith("no")}
-            >
-              Regretfully decline
-            </Button>
+              <Button size="lg" className="sm:min-w-52" onClick={() => openWith("yes")}>
+                <Check className="h-4 w-4" strokeWidth={3} />
+                Joyfully accept
+              </Button>
+              <Button
+                size="lg"
+                variant="secondary"
+                className="sm:min-w-52"
+                onClick={() => openWith("no")}
+              >
+                Regretfully decline
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -97,28 +118,24 @@ export function RsvpCta() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-4 left-1/2 z-40 -translate-x-1/2 px-3 w-full max-w-md"
+            className="fixed bottom-4 left-1/2 z-40 w-full max-w-md -translate-x-1/2 px-3"
           >
-            <div className="flex items-center gap-2 rounded-full border border-border bg-card/90 p-1.5 shadow-[0_15px_40px_-20px_rgba(58,66,56,0.45)] backdrop-blur-md">
-              <span className="ml-3 hidden sm:inline text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            <div className="flex items-center gap-2 rounded-full border-2 border-brand-rose/60 bg-card/95 p-1.5 shadow-paper-rose backdrop-blur-md">
+              <span className="eyebrow ml-3 hidden text-brand-rose-ink sm:inline">
                 RSVP
               </span>
               <div className="flex flex-1 gap-1.5">
-                <Button
-                  size="sm"
-                  className="flex-1 rounded-full"
-                  onClick={() => openWith("yes")}
-                >
-                  <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                <Button size="sm" className="flex-1" onClick={() => openWith("yes")}>
+                  <Check className="h-3.5 w-3.5 [&>path]:fill-none" strokeWidth={3}/>
                   Will attend
                 </Button>
                 <Button
                   size="sm"
-                  variant="secondary"
-                  className="flex-1 rounded-full"
+                  variant="outline"
+                  className="flex-1"
                   onClick={() => openWith("no")}
                 >
-                  <X className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  <X className="h-3.5 w-3.5" strokeWidth={3} />
                   Won&apos;t attend
                 </Button>
               </div>

@@ -4,43 +4,70 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Sage / warm-cream wedding palette.
- * Designed to look soft, muted and pastel.
- * Override in one place to re-skin the whole site.
+ * Palette lifted straight from the Stag & Doe invite
+ * (public/Stag-and-Doe-invite.png) — a cream riso-print ground with five
+ * hand-drawn ink colours. Change these and the whole site re-skins.
+ *
+ * Display type is Block Berthold (the invite's own face), self-hosted from
+ * public/fonts and wired up in app/layout.tsx. Font by OnlineWebFonts,
+ * licensed CC BY 4.0 — https://www.onlinewebfonts.com/fonts
  */
 :root {
-  --background: #f7f5ef;
-  --foreground: #3a4238;
+  /* --- the five invite inks, sampled from the artwork --- */
+  --brand-blue: #5578af;
+  --brand-rose: #d46c7f;
+  --brand-red: #d3413d;
+  --brand-olive: #838b5f;
+  --brand-gold: #e6b960;
+  --brand-cream: #f8f6ea;
+  --brand-ivory: #fffdf6;
 
-  --card: #fffefb;
-  --card-foreground: #3a4238;
+  /*
+   * The invite's inks are drawing colours, not text colours — rose on cream is
+   * only 3.1:1. These darker cousins keep the same hue but clear AA, so small
+   * copy uses `-ink` and lines/large display type use the originals.
+   */
+  --brand-blue-ink: #4a6a9d;
+  --brand-rose-ink: #ac4157;
+  --brand-olive-ink: #666e49;
+  --brand-red-ink: #c33936;
 
-  --popover: #fffefb;
-  --popover-foreground: #3a4238;
+  /* --- semantic tokens --- */
+  --background: var(--brand-cream);
+  --foreground: #3d4b6e;
 
-  --primary: #7c8f78;
-  --primary-foreground: #fafaf7;
+  --card: var(--brand-ivory);
+  --card-foreground: #3d4b6e;
 
-  --secondary: #e5e1d4;
-  --secondary-foreground: #4a5547;
+  --popover: var(--brand-ivory);
+  --popover-foreground: #3d4b6e;
 
-  --muted: #ece8dc;
-  --muted-foreground: #6b7367;
+  /* A half-step darker than the display blue so cream text on it clears AA. */
+  --primary: #4e6fa3;
+  --primary-foreground: var(--brand-ivory);
 
-  --accent: #c6cfb8;
-  --accent-foreground: #3a4238;
+  --secondary: #f1ecdc;
+  --secondary-foreground: #3d4b6e;
 
-  --destructive: #b65b5b;
-  --destructive-foreground: #fafaf7;
+  --muted: #ede7d5;
+  --muted-foreground: #5c6a86;
 
-  --border: #d9d4c4;
-  --input: #d9d4c4;
-  --ring: #7c8f78;
+  --accent: #e9eef6;
+  --accent-foreground: #3d4b6e;
 
-  --radius: 0.75rem;
+  --destructive: var(--brand-red);
+  --destructive-foreground: var(--brand-ivory);
 
-  --font-display: "Cormorant Garamond", "Times New Roman", serif;
-  --font-body: var(--font-sans-inter), ui-sans-serif, system-ui, sans-serif;
+  --border: #e0d8c3;
+  --input: #cfc7b1;
+  --ring: var(--brand-blue);
+
+  /* Poster corners: soft, but nowhere near a pill. */
+  --radius: 1.25rem;
+
+  --font-display: var(--font-display-block), "Haettenschweiler",
+    "Arial Narrow Bold", ui-sans-serif, sans-serif;
+  --font-body: var(--font-sans-nunito), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme inline {
@@ -64,65 +91,135 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
+  /* Named so they never collide with Tailwind's own rose/red/blue scales. */
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-rose: var(--brand-rose);
+  --color-brand-red: var(--brand-red);
+  --color-brand-olive: var(--brand-olive);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-ivory: var(--brand-ivory);
+  --color-brand-blue-ink: var(--brand-blue-ink);
+  --color-brand-rose-ink: var(--brand-rose-ink);
+  --color-brand-olive-ink: var(--brand-olive-ink);
+  --color-brand-red-ink: var(--brand-red-ink);
+
   --font-sans: var(--font-body);
-  --font-serif: var(--font-display);
+  --font-display: var(--font-display);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  /*
+   * Hard offset shadows — a second impression of the ink, slightly out of
+   * register. Solid for pressable things, translucent for paper.
+   */
+  --shadow-ink-rose: 3px 3px 0 0 var(--brand-rose);
+  --shadow-ink-blue: 3px 3px 0 0 var(--brand-blue);
+  --shadow-ink-red: 3px 3px 0 0 var(--brand-red);
+  --shadow-paper-rose: 6px 6px 0 0
+    color-mix(in srgb, var(--brand-rose) 40%, transparent);
+  --shadow-paper-blue: 6px 6px 0 0
+    color-mix(in srgb, var(--brand-blue) 35%, transparent);
+  --shadow-paper-olive: 6px 6px 0 0
+    color-mix(in srgb, var(--brand-olive) 40%, transparent);
+  --shadow-paper-gold: 6px 6px 0 0
+    color-mix(in srgb, var(--brand-gold) 55%, transparent);
+  --shadow-paper-red: 6px 6px 0 0
+    color-mix(in srgb, var(--brand-red) 35%, transparent);
+
+  --radius-sm: calc(var(--radius) - 0.75rem);
+  --radius-md: calc(var(--radius) - 0.5rem);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 0.5rem);
 }
 
-* {
-  border-color: var(--border);
+/*
+ * Everything below is layered on purpose. Unlayered rules outrank *every*
+ * Tailwind layer, so a bare `* { border-color }` here would silently beat
+ * `border-brand-rose` on any element that used it.
+ */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html,
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  svg {
+    overflow: visible;
+  }
 }
 
-html,
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body);
-  font-feature-settings: "ss01", "cv11";
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
+@layer components {
+  /*
+   * Block Berthold is a poster face: all-caps, tight tracking, no
+   * letter-spacing tricks needed. It only ships one weight, so never ask for
+   * a bolder one. In `components` so `leading-*` and friends can override it.
+   */
+  .font-display,
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.005em;
+    line-height: 0.95;
+  }
 
-.font-display,
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
+  /* The invite's small labels: caps, wide, rose or blue. */
+  .eyebrow {
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
 
-/* Subtle animated texture for the hero overlay */
-@keyframes drift {
-  0% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(-8px, -8px, 0); }
-  100% { transform: translate3d(0, 0, 0); }
-}
+  /*
+   * Riso print never lands perfectly flat — a whisper of paper grain over the
+   * cream keeps large empty areas from looking like flat #f8f6ea.
+   */
+  .paper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
+  }
 
-.grainy {
-  position: relative;
-}
-.grainy::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.35;
-  mix-blend-mode: multiply;
-  background-image: radial-gradient(
-    rgba(58, 66, 56, 0.12) 1px,
-    transparent 1px
-  );
-  background-size: 3px 3px;
-}
+  /* Hand-placed, not machine-placed. */
+  .tilt-l {
+    transform: rotate(-1.1deg);
+  }
+  .tilt-r {
+    transform: rotate(1.1deg);
+  }
 
-/* Smoother scroll for anchor links */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 4rem;
+  @media (prefers-reduced-motion: reduce) {
+    .tilt-l,
+    .tilt-r {
+      transform: none;
+    }
+  }
 }

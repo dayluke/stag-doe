@@ -136,7 +136,9 @@ export const CarouselContent = React.forwardRef<
 >(({ className, ...props }, ref) => {
   const { carouselRef, orientation } = useCarousel();
   return (
-    <div ref={carouselRef} className="overflow-hidden">
+    // -m-2/p-2 cancel out, so this only widens the clip region — enough for
+    // the cards' 6px hard offset shadow to survive `overflow-hidden`.
+    <div ref={carouselRef} className="-m-2 overflow-hidden p-2">
       <div
         ref={ref}
         className={cn(
@@ -183,7 +185,8 @@ export const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-card/80 backdrop-blur",
+        "absolute left-2 top-1/2 -mt-[1.375rem] h-11 w-11 rounded-full border-brand-rose/70 bg-card/90 shadow-none backdrop-blur",
+        "active:translate-x-0 active:translate-y-0 active:scale-90",
         className
       )}
       disabled={!canScrollPrev}
@@ -208,7 +211,8 @@ export const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-card/80 backdrop-blur",
+        "absolute right-2 top-1/2 -mt-[1.375rem] h-11 w-11 rounded-full border-brand-rose/70 bg-card/90 shadow-none backdrop-blur",
+        "active:translate-x-0 active:translate-y-0 active:scale-90",
         className
       )}
       disabled={!canScrollNext}
@@ -234,10 +238,10 @@ export function CarouselDots({ className }: { className?: string }) {
           onClick={() => scrollTo(i)}
           aria-label={`Go to slide ${i + 1}`}
           className={cn(
-            "h-2 rounded-full transition-all",
+            "h-2.5 rounded-full border-2 transition-all",
             i === selectedIndex
-              ? "w-6 bg-primary"
-              : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/60"
+              ? "w-7 border-brand-blue bg-brand-blue"
+              : "w-2.5 border-brand-rose/50 bg-transparent hover:bg-brand-rose/30"
           )}
         />
       ))}

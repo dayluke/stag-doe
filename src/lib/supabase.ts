@@ -33,14 +33,14 @@ export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 /* -------------------- Types matching supabase/schema.sql -------------------- */
 
 export type AttendingStatus = "yes" | "no" | null;
-export type MenuChoice = "traditional" | "vegetarian" | null;
 
 export type GuestRow = {
   id: string;
   party_id: string;
   full_name: string;
   attending: AttendingStatus;
-  menu_choice: MenuChoice;
+  /** Night ids (see `siteConfig.nights`) this guest is staying over for. */
+  nights: string[] | null;
   dietary_notes: string | null;
   responded_at: string | null;
 };
@@ -88,7 +88,7 @@ export async function findPartyByGuestName(
 export type RsvpSubmission = {
   guestId: string;
   attending: Exclude<AttendingStatus, null>;
-  menuChoice: MenuChoice;
+  nights: string[];
   dietaryNotes: string | null;
 };
 
@@ -104,7 +104,7 @@ export async function submitRsvps(submissions: RsvpSubmission[]) {
         .from("guests")
         .update({
           attending: s.attending,
-          menu_choice: s.menuChoice,
+          nights: s.nights,
           dietary_notes: s.dietaryNotes,
           responded_at: now,
         })
