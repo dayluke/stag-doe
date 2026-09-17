@@ -90,11 +90,19 @@ export const Carousel = React.forwardRef<
 
     React.useEffect(() => {
       if (!api) return;
-      setSlideCount(api.scrollSnapList().length);
-      onSelect(api);
-      api.on("reInit", onSelect);
+      // Embla re-inits whenever the slides resize — including when the
+      // `sm:` breakpoint swaps 1-up for 2-up — and that changes how many
+      // snaps there are, so the count has to be re-read, not just the index.
+      const onReInit = (instance: CarouselApi) => {
+        if (!instance) return;
+        setSlideCount(instance.scrollSnapList().length);
+        onSelect(instance);
+      };
+      onReInit(api);
+      api.on("reInit", onReInit);
       api.on("select", onSelect);
       return () => {
+        api.off("reInit", onReInit);
         api.off("select", onSelect);
       };
     }, [api, onSelect]);

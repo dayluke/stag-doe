@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { BedDouble, Check, ExternalLink, KeyRound } from "lucide-react";
 import {
   Carousel,
@@ -12,16 +13,34 @@ import {
 import { Button } from "@/components/ui/button";
 import { InkBadge, PosterCard, Section } from "@/components/ui/section";
 import { Doodle } from "@/components/ui/doodle";
-import { siteConfig, type Room } from "@/lib/site-config";
+import { siteConfig, type HousePhoto, type Room } from "@/lib/site-config";
+import { assetPath } from "@/lib/utils";
 
 function RoomCard({ room }: { room: Room }) {
   return (
+    // The card fills its slide: below `sm:` that's the full column, and a max
+    // width there left arrow-sized gutters behind once the arrows had gone.
+    // At `sm:` the 2-up slide is narrower than any such cap anyway.
     <PosterCard
       ink="rose"
-      className="mx-auto flex h-full w-full max-w-md flex-col items-center text-center"
+      className="flex h-full w-full flex-col items-center text-center"
     >
-      <InkBadge ink="rose">
-        <BedDouble className="h-5 w-5" strokeWidth={1.75} />
+      {/* A photo of the room where there is one, otherwise the bed stamp. */}
+      <InkBadge
+        ink="rose"
+        className={room.image ? "relative h-38 w-38 overflow-hidden" : undefined}
+      >
+        {room.image ? (
+          <Image
+            src={assetPath(room.image)}
+            alt={room.name}
+            fill
+            sizes="7rem"
+            className="object-cover"
+          />
+        ) : (
+          <BedDouble className="h-5 w-5" strokeWidth={1.75} />
+        )}
       </InkBadge>
       <h3 className="mt-4 font-display uppercase text-2xl leading-tight text-brand-blue-ink">
         {room.name}
@@ -31,6 +50,21 @@ function RoomCard({ room }: { room: Room }) {
         <p className="mt-4 leading-relaxed text-muted-foreground">{room.note}</p>
       ) : null}
     </PosterCard>
+  );
+}
+
+/** A photo in its own frame — no caption, the picture is the point. */
+function PhotoCard({ photo }: { photo: HousePhoto }) {
+  return (
+    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border-2 border-brand-blue bg-card shadow-paper-blue">
+      <Image
+        src={assetPath(photo.src)}
+        alt={photo.alt}
+        fill
+        sizes="(max-width: 640px) 92vw, 28rem"
+        className="object-cover"
+      />
+    </div>
   );
 }
 
@@ -47,6 +81,21 @@ export function HouseSection() {
       doodle="house"
       containerClassName="max-w-5xl"
     >
+      <div className="relative mb-8 sm:px-16">
+        <Carousel opts={{ align: "start" }}>
+          <CarouselContent>
+            {house.gallery.map((photo) => (
+              <CarouselItem key={photo.src} className="sm:basis-1/2">
+                <PhotoCard photo={photo} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden sm:inline-flex sm:-left-14" />
+          <CarouselNext className="hidden sm:inline-flex sm:-right-14" />
+          <CarouselDots />
+        </Carousel>
+      </div>
+
       <PosterCard
         ink="blue"
         className="mx-auto flex max-w-2xl flex-col items-center gap-6 p-8 text-center sm:p-10"

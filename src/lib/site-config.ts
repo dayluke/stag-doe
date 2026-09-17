@@ -15,6 +15,7 @@ export type ItineraryEvent = {
   time: string;
   title: string;
   icon: ItineraryIcon;
+  link?: string;
 };
 
 export type ItineraryDay = {
@@ -28,6 +29,14 @@ export type Room = {
   name: string;
   sleeps: string;
   note?: string;
+  image?: string;
+};
+
+/** A photo of the house, shown in the gallery carousel. */
+export type HousePhoto = {
+  /** A file in `/public`. */
+  src: string;
+  alt: string;
 };
 
 export type TravelIcon = "car" | "train" | "lift";
@@ -88,7 +97,7 @@ export const siteConfig = {
   brideFirstName: "Leanne",
   groomFirstName: "Luke",
   ampersand: "&",
-  heroImageUrl: "HYM46132-1-3971303082.jpg", // "/hero-placeholder.svg",
+  heroImageUrl: "durns-hero.jpg",
   heroImageAlt: "Leanne and Luke",
 
   /* ---------------- Core info ---------------- */
@@ -115,7 +124,7 @@ export const siteConfig = {
       subtitle: "Day two",
       events: [
         { time: "11:00 AM", title: "Bike ride", icon: "bike" },
-        { time: "1:00 PM", title: "Pub lunch", icon: "pub" },
+        { time: "1:00 PM", title: "Pub lunch", icon: "pub", link: "https://monkeybrewhouse.co.uk/wp-content/uploads/2026/05/MB_A4_MainMenu_May_2026_V1.pdf" },
         { time: "3:00 PM", title: "Cocktail masterclass", icon: "cocktails" },
         { time: "7:00 PM", title: "Pizza oven", icon: "pizza" },
       ],
@@ -125,9 +134,9 @@ export const siteConfig = {
       day: "Sunday",
       subtitle: "Day three",
       events: [
-        { time: "11:00 AM", title: "New Forest Water Park", icon: "waterpark" },
+        { time: "11:00 AM", title: "New Forest Water Park", icon: "waterpark", link: "https://www.newforestwaterpark.co.uk/" },
         { time: "6:00 PM", title: "BBQ", icon: "bbq" },
-        { time: "8:00 PM", title: "Murder mystery night", icon: "murder-mystery" },
+        { time: "8:00 PM", title: "Traitors-themed night", icon: "murder-mystery" },
       ],
     },
     {
@@ -147,13 +156,38 @@ export const siteConfig = {
     tagline: "A gorgeous, large house to ourselves in the New Forest",
     description:
     "It sleeps 12 people, and has 6 bedrooms. The Ground Floor has a sitting room, dining room, reception hall, and kitchen. The First Floor has 3 double bedrooms. The Second Floor has the loft bedroom, snug, and large bathroom.",
-    listingUrl: "", // TODO: optional Airbnb / booking link
+    listingUrl: "",
     rooms: [
-      { name: "Room 1", sleeps: "First Floor", note: "Luke & Leanne" },
-      { name: "Room 2", sleeps: "First Floor", note: "Nikki & David" },
-      { name: "Room 3", sleeps: "First Floor", note: "Ben & Emma" },
-      { name: "Loft Bedroom", sleeps: "Second Floor", note: "Sleeps up to 8" },
-      { name: "The Cabin", sleeps: "Shepard's Hut", note: "Alex & Kian" },
+      {
+        name: "Room 1",
+        sleeps: "First Floor",
+        note: "Luke & Leanne",
+        image: "durns-bedroom-1.jpg",
+      },
+      {
+        name: "Room 2",
+        sleeps: "First Floor",
+        note: "Nikki & David",
+        image: "durns-bedroom-2.jpg",
+      },
+      {
+        name: "Room 3",
+        sleeps: "First Floor",
+        note: "Ben & Emma",
+        image: "durns-bedroom-3.jpg",
+      },
+      {
+        name: "Loft Bedroom",
+        sleeps: "Second Floor",
+        note: "Sleeps up to 8",
+        image: "durns-bedroom-loft.jpg",
+      },
+      {
+        name: "The Cabin",
+        sleeps: "Shepard's Hut",
+        note: "Alex & Kian",
+        image: "durns-bedroom-cabin.jpg",
+      },
       // George, Rich, Sian, Ollie? ( + Lucy?)
     ] satisfies Room[],
     provided: [
@@ -164,6 +198,27 @@ export const siteConfig = {
       "Pool table, dart board, table tennis and garden games",
       "Pizza oven and BBQ",
     ],
+    gallery: [
+      { src: "durns-hero.jpg", alt: "The house from the front" },
+      { src: "durns-pool-2.jpg", alt: "The length of the pool on a clear day" },
+      {
+        src: "durns-outdoor-cinema.jpg",
+        alt: "The timber cinema shelter built into the trees",
+      },
+      {
+        src: "durns-fireplace.jpg",
+        alt: "A fire lit in the dining room",
+      },
+      {
+        src: "durns-pizza-oven.jpg",
+        alt: "The outdoor kitchen and pizza oven under festoon lights",
+      },
+      {
+        src: "durns-outdoor-cinema-2.jpg",
+        alt: "Deckchairs facing the screen at the outdoor cinema",
+      },
+      { src: "durns-pool.jpeg", alt: "The outdoor pool and the poolhouse" },
+    ] satisfies HousePhoto[],
   },
 
   /* ---------------- Getting there ---------------- */
@@ -200,7 +255,7 @@ export const siteConfig = {
     covered: [
       "Friday — arriving after dinner, but we'll have snacks for the movie night",
       "Saturday — breakfast, and pizza from the oven in the evening",
-      "Sunday — breakfast and the BBQ", // TODO: Lunch for Sunday
+      "Sunday — breakfast and the BBQ",
       "Monday — breakfast before we head off",
       "Tea, coffee, snacks and soft drinks throughout",
     ],
@@ -233,7 +288,7 @@ export const siteConfig = {
         icon: "costume",
         title: "It's not a dress, it's a kilt",
         description:
-          "TODO — characters go out roughly a week before, so you’ll know who you’re dressing as.",
+          "An outfit or costume for our Traitors themed game night.",
       },
       {
         icon: "drink",
@@ -257,12 +312,12 @@ export const siteConfig = {
       {
         title: "Food kitty",
         amount: "£25", // TODO: £4pp breakfast each day (£12 total), £7pp BBQ, £6pp pizza night
-        description: "Breakfasts, the pizza night, the BBQ and everything in between.",
+        description: "Breakfasts, the pizza night, the BBQ and snacks.",
       },
       {
         title: "Activities",
         amount: "£85", // TODO: £60pp for cocktail masterclass, £22pp for water park
-        description: "2-hour cocktail masterclass, and a 1-hour water park session (doesn't include wetsuit).",
+        description: "2-hour cocktail masterclass, and a 1-hour water park session (doesn't include £5 wetsuit).",
       },
     ] satisfies CostItem[],
     notIncluded: [
@@ -275,7 +330,8 @@ export const siteConfig = {
       label: "Pay your share",
       url: "https://settleup.starlingbank.com/luke-day-leanne-newman-4bcac9",
       method: "Pay using the link below or our bank account details:",
-      reference: "Account Number: 88213601, Sort Code: 60-83-71",
+      accountNumber: "88213601",
+      sortCode: "60-83-71",
       deadlineHuman: "at least 1 month before",
       note: "",
     },
@@ -285,7 +341,7 @@ export const siteConfig = {
   goodToKnow: {
     rules: [
       {
-        title: "Quiet after 11pm",
+        title: "Quiet after 10pm",
         description: "We need to try and keep noise to a minimum before 7:30AM and after 10:00PM.",
       },
       {

@@ -4,7 +4,7 @@ import { siteConfig } from "@/lib/site-config";
 
 export function Footer() {
   return (
-    <footer className="paper relative w-full bg-secondary py-14 text-center">
+    <footer className="paper relative w-full bg-secondary pt-14 pb-20 text-center">
       <div className="relative z-10 mx-auto flex max-w-2xl flex-col items-center px-5">
         <WavyRule
           color="var(--brand-rose)"

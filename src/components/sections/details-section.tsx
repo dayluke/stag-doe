@@ -45,7 +45,7 @@ export function DetailsSection() {
       id="details"
       eyebrow="The essentials"
       title="Save the weekend"
-      description={`From ${siteConfig.arriveHuman}, away again by ${siteConfig.leaveHuman}.`}
+      description={`Arrive from ${siteConfig.arriveHuman}, depart by ${siteConfig.leaveHuman}.`}
       containerClassName="max-w-5xl"
     >
       <div className="mx-auto grid max-w-4xl items-center gap-10 sm:gap-12 md:grid-cols-2">

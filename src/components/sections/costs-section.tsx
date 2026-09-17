@@ -111,7 +111,8 @@ export function CostsSection() {
           {costs.payment.method}
         </p>
         <p className="text-sm text-muted-foreground">
-          {costs.payment.reference}
+          Account Number: {costs.payment.accountNumber} {' '}
+          <span style={{ display: "inline-block", whiteSpace: "nowrap" }}>Sort Code: {costs.payment.sortCode}</span>
         </p>
         <p className="text-sm text-muted-foreground">
           Please pay by {costs.payment.deadlineHuman}.

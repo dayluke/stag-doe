@@ -11,6 +11,8 @@ import {
 import { Doodle, type DoodleName } from "@/components/ui/doodle";
 import { PosterCard, Section } from "@/components/ui/section";
 import { WavyRule } from "@/components/ui/wavy-frame";
+import { ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   siteConfig,
   type ItineraryDay,
@@ -67,9 +69,24 @@ function DayCard({ day }: { day: ItineraryDay }) {
             <span className="flex h-14 w-14 items-center justify-center">
               <Doodle name={DOODLES[event.icon]} size={56} />
             </span>
-            <h4 className="font-display uppercase text-lg leading-tight text-foreground">
-              {event.title}
-            </h4>
+            <div className="flex items-center gap-2">
+              <h4 className="font-display uppercase text-lg leading-tight text-foreground">
+                {event.title}
+              </h4>
+              {event.link ? (
+                <Button
+                  asChild
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 shrink-0"
+                >
+                  <a href={event.link} target="_blank" rel="noreferrer">
+                    <ExternalLink className="h-4 w-4" />
+                    <span className="sr-only">{`More about ${event.title}`}</span>
+                  </a>
+                </Button>
+              ) : null}
+            </div>
           </li>
         ))}
       </ol>
@@ -89,7 +106,7 @@ export function ItinerarySection() {
       containerClassName="max-w-4xl"
     >
       <div className="relative sm:px-16">
-        <Carousel opts={{ loop: true, align: "center" }}>
+        <Carousel opts={{ loop: false, align: "center" }}>
           <CarouselContent>
             {siteConfig.itinerary.map((day) => (
               <CarouselItem key={day.id}>
