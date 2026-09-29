@@ -123,10 +123,9 @@ export const siteConfig = {
       day: "Saturday",
       subtitle: "Day two",
       events: [
-        { time: "11:00 AM", title: "Bike ride", icon: "bike" },
-        { time: "1:00 PM", title: "Pub lunch", icon: "pub", link: "https://monkeybrewhouse.co.uk/wp-content/uploads/2026/05/MB_A4_MainMenu_May_2026_V1.pdf" },
-        { time: "3:00 PM", title: "Cocktail masterclass", icon: "cocktails" },
-        { time: "7:00 PM", title: "Pizza oven", icon: "pizza" },
+        { time: "11:00 AM", title: "New Forest Water Park", icon: "waterpark", link: "https://www.newforestwaterpark.co.uk/" },
+        { time: "6:00 PM", title: "BBQ", icon: "bbq" },
+        { time: "8:00 PM", title: "Traitors-themed night", icon: "murder-mystery" },
       ],
     },
     {
@@ -134,9 +133,10 @@ export const siteConfig = {
       day: "Sunday",
       subtitle: "Day three",
       events: [
-        { time: "11:00 AM", title: "New Forest Water Park", icon: "waterpark", link: "https://www.newforestwaterpark.co.uk/" },
-        { time: "6:00 PM", title: "BBQ", icon: "bbq" },
-        { time: "8:00 PM", title: "Traitors-themed night", icon: "murder-mystery" },
+        { time: "11:00 AM", title: "Bike ride", icon: "bike" },
+        { time: "1:00 PM", title: "Pub lunch", icon: "pub", link: "https://butcombe.com/the-mayflower-inn-hampshire/" },
+        { time: "3:00 PM", title: "Cocktail masterclass", icon: "cocktails" },
+        { time: "7:00 PM", title: "Pizza oven", icon: "pizza" },
       ],
     },
     {
@@ -194,7 +194,7 @@ export const siteConfig = {
       "Towels, shampoo, conditioner and bodywash",
       "Well-stocked pantry (tea, coffee, etc.)",
       "Wellies and picnic blankets",
-      "10 adult bikes & helmets",
+      "Adult bikes & helmets",
       "Pool table, dart board, table tennis and garden games",
       "Pizza oven and BBQ",
     ],
