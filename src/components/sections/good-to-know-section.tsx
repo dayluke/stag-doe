@@ -49,13 +49,13 @@ export function GoodToKnowSection() {
           If it's important
         </span>
         <span className="eyebrow block text-brand-rose-ink">
-          Ask either Leanne or Luke directly
+          Ask Leanne
         </span>
         <span className="font-display uppercase mt-5 text-lg text-foreground">
-          If it's not urgent
+          If it's not
         </span>
         <span className="eyebrow block mb-5 text-brand-rose-ink">
-          Leave a note in your RSVP
+          Ask Luke
         </span>
         {hasGroupChat ? (
           <Button asChild variant="outline">

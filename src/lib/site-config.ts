@@ -261,8 +261,8 @@ export const siteConfig = {
     ],
     byo: [
       "Your own booze for the weekend",
-      "Saturday’s pub lunch — pay for your own on the day",
-      "Sunday's lunch at the water park",
+      "Saturday's lunch at the water park",
+      "Sunday's pub lunch — pay for your own on the day",
       "Anything you specifically can’t live without",
     ],
     note:
